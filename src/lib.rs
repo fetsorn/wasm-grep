@@ -1,17 +1,14 @@
 extern crate wasm_bindgen;
+extern crate grep_regex;
+extern crate grep_matcher;
+extern crate grep_searcher;
 
 use wasm_bindgen::prelude::*;
+use grep_matcher::Matcher;
+use grep_regex::RegexMatcher;
+use grep_searcher::Searcher;
+use grep_searcher::sinks::UTF8;
 
-// Definitions of the functionality available in JS, which wasm-bindgen will
-// generate shims for today (and eventually these should be near-0 cost!)
-//
-// These definitions need to be hand-written today but the current vision is
-// that we'll use WebIDL to generate this `extern` block into a crate which you
-// can link and import. There's a tracking issue for this at
-// https://github.com/rustwasm/wasm-bindgen/issues/42
-//
-// In the meantime these are written out by hand and correspond to the names and
-// signatures documented on MDN, for example
 #[wasm_bindgen]
 extern "C" {
     type HTMLDocument;
@@ -28,7 +25,34 @@ extern "C" {
     fn append_child(this: &Element, other: Element);
 }
 
-// Called by our JS entry point to run the example
+const SHERLOCK: &'static [u8] = b"\
+          For the Doctor Watsons of this world, as opposed to the Sherlock
+          Holmeses, success in the province of detective work must always
+          be, to a very large extent, the result of luck. Sherlock Holmes
+          can extract a clew from a wisp of straw or a flake of cigar ash;
+          but Doctor Watson has to have it taken out for him and dusted,
+          and exhibited clearly, with a label attached.
+          ";
+
+#[wasm_bindgen]
+pub fn grep(textfile: String, patternfile: String) -> Result<String, JsValue> {
+    let mut matches: Vec<String> = vec![];
+    let patterns: &str = patternfile.strip_suffix("\n").unwrap();
+    for pattern in patterns.split("\n") {
+        let matcher = RegexMatcher::new(&pattern).unwrap();
+        Searcher::new().search_slice(&matcher, textfile.as_bytes(), UTF8(|lnum, line| {
+            let mymatch = matcher.find(line.as_bytes())?.unwrap();
+            matches.push(line.to_string());
+            Ok(true)
+        })).unwrap();
+    }
+    matches.sort();
+    matches.dedup();
+    Ok(matches.join("\n"))
+    //let patterns1: Vec<&str> = patterns.split("\n").collect();
+    //Ok(patterns1.join("-"))
+}
+
 #[wasm_bindgen]
 pub fn run() {
     let val = document.createElement("p");
