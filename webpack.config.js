@@ -19,8 +19,8 @@ module.exports = {
     experiments: {
         syncWebAssembly: true,
     },
-	watchOptions: {
-		   aggregateTimeout: 200,
-		   poll: 200,
-	},
+    watchOptions: {
+    aggregateTimeout: 200,
+    poll: 200,
+    },
 }
