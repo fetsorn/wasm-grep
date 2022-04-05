@@ -1,3 +1,5 @@
+#![cfg(target_arch = "wasm32")]
+
 extern crate wasm_bindgen;
 extern crate grep_regex;
 extern crate grep_matcher;
@@ -11,17 +13,65 @@ use grep_searcher::sinks::UTF8;
 #[wasm_bindgen]
 pub async fn grep(textfile: String, patternfile: String) -> Result<JsValue, JsValue> {
     let mut matches: Vec<String> = vec![];
-    let patterns: &str = patternfile.strip_suffix("\n").unwrap();
-    for pattern in patterns.split("\n") {
-        let matcher = RegexMatcher::new(&pattern).unwrap();
-        Searcher::new().search_slice(&matcher, textfile.as_bytes(), UTF8(|_, line| {
-            matches.push(line.to_string());
-            Ok(true)
-        })).unwrap();
+    let patterns = patternfile.trim_matches('\n')
+                                           .split("\n")
+                                           .filter(|line| {line != &""});
+    for pattern in patterns {
+        let matcher = match RegexMatcher::new(&pattern) {
+            Ok(u) => u,
+            _ => continue, 
+        };
+        match Searcher::new().search_slice(&matcher,
+                                           textfile.as_bytes(),
+                                           UTF8(|_, line| {
+                                               matches.push(line.to_string());
+                                               Ok(true)
+                                           })
+        ) {
+            Err(e) => panic!("{}", e),
+            _ => (),
+        };
     }
     matches.sort();
     matches.dedup();
     let promise = js_sys::Promise::resolve(&(matches.join("\n")).into());
     let result = wasm_bindgen_futures::JsFuture::from(promise).await?;
     Ok(result)
+}
+
+use wasm_bindgen_test::*;
+wasm_bindgen_test_configure!(run_in_browser);
+
+#[wasm_bindgen_test]
+async fn searches_patternfile_trailing_newline() {
+    let textfile = "first
+second
+third";
+    let patternfile = "first
+";
+    let result = "first\n";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+               Ok(JsValue::from_str(result)));
+}
+
+#[wasm_bindgen_test]
+async fn searches_patternfile_no_trailing_newline() {
+    let textfile = "first
+second
+third";
+    let patternfile = "first";
+    let result = "first\n";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+               Ok(JsValue::from_str(result)));
+}
+
+#[wasm_bindgen_test]
+async fn searches_no_patternfile() {
+    let textfile = "first
+second
+third";
+    let patternfile = "";
+    let result = "";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+               Ok(JsValue::from_str(result)));
 }
