@@ -98,3 +98,14 @@ third";
     assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
                Ok(JsValue::from_str(result)));
 }
+
+#[wasm_bindgen_test]
+async fn searches_wildcard() {
+    let textfile = "first
+second
+third";
+    let patternfile = "ir.*";
+    let result = "first\nthird\n";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+               Ok(JsValue::from_str(result)));
+}
