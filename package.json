@@ -1,7 +1,27 @@
 {
+    "name": "@fetsorn/wasm-grep",
+    "description": "WASM port of rigprep",
+    "module": "./pkg/bundler/index.js",
+    "types": "./pkg/bundler/index.d.ts",
+    "sideEffects": false,
+    "files": [
+        "pkg/**/*"
+    ],
+    "version": "0.2.0",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/fetsorn/wasm-grep"
+    },
     "scripts": {
-        "start": "webpack -w",
-        "server": "ws -d dist",
+        "build": "yarn clean && yarn build:bundler && yarn build:web",
+        "build:bundler": "webpack -c webpack.bundler.mjs",
+        "build:web": "webpack -c webpack.web.mjs",
+        "test": "yarn test:node; yarn test:browser",
+        "test:browser": "wasm-pack test --headless --firefox --safari",
+        "test:node": "wasm-pack test --node",
+        "start:bundler": "ws -d dist/bundler",
+        "start:web": "ws -d dist/web",
         "clean": "rimraf dist pkg target"
     },
     "devDependencies": {

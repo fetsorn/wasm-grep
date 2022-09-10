@@ -2,7 +2,7 @@
   description = "Flake for my portfolio";
 
   inputs = {
-    nixpkgs = { url = "github:nixos/nixpkgs/nixos-unstable"; };
+    nixpkgs = { url = "github:nixos/nixpkgs/nixos-22.05"; };
 
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -37,7 +37,7 @@
       let
         pkgs = (import nixpkgs {
           inherit system;
-          overlays = [ rust-overlay.overlay ];
+          overlays = [ rust-overlay.overlays.default ];
         });
         crateName =
           (builtins.fromTOML (builtins.readFile ./Cargo.toml)).package.name;

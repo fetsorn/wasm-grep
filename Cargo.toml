@@ -1,11 +1,14 @@
 [package]
 name = "wasm-grep"
 version = "0.1.9"
-authors = ["Sven Sauleau <sven@sauleau.com>"]
+license = "MIT"
+description = "WASM port of rigprep"
+repository = "https://github.com/fetsorn/wasm-grep"
+authors = ["Anton Davydov <fetsorn@gmail.com>", "Sven Sauleau <sven@sauleau.com>"]
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 wasm-bindgen = "0.2.79"

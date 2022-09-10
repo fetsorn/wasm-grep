@@ -1,22 +1,11 @@
-# Example
+## new publish
 
-Note that the binaries are available in `./node_modules/.bin`.
-
-## Start Webpack
-
-In watch and development mode:
-
-```sh
-npm start
+``` sh
+yarn build
+yarn publish
 ```
 
-## Start the HTTP server
-
-```sh
-npm run server
-```
-
-## publish
+## old publish
 ```sh
 rm -r pkg/ target/
 wasm-pack build --scope fetsorn
