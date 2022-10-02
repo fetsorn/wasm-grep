@@ -4,8 +4,6 @@ use wasm_bindgen_test::*;
 use wasm_bindgen::JsValue;
 use wasm_grep::grep;
 
-wasm_bindgen_test_configure!(run_in_browser);
-
 #[wasm_bindgen_test]
 async fn searches() {
     let textfile = "first
