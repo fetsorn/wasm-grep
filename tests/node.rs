@@ -11,7 +11,7 @@ second
 third";
     let patternfile = "s\n";
     let result = "first\nsecond\n";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
                Ok(JsValue::from_str(result)));
 }
 
@@ -22,7 +22,7 @@ second
 third";
     let patternfile = "d$\n";
     let result = "second\nthird\n";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
                Ok(JsValue::from_str(result)));
 }
 
@@ -34,7 +34,7 @@ third";
     let patternfile = "first
 ";
     let result = "first\n";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
                Ok(JsValue::from_str(result)));
 }
 
@@ -45,7 +45,7 @@ second
 third";
     let patternfile = "first";
     let result = "first\n";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
                Ok(JsValue::from_str(result)));
 }
 
@@ -56,7 +56,7 @@ second
 third";
     let patternfile = "";
     let result = "";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
                Ok(JsValue::from_str(result)));
 }
 
@@ -67,6 +67,28 @@ second
 third";
     let patternfile = "ir.*";
     let result = "first\nthird\n";
-    assert_eq!(grep(textfile.to_string(), patternfile.to_string()).await,
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), false).await,
+               Ok(JsValue::from_str(result)));
+}
+
+#[wasm_bindgen_test]
+async fn prunes() {
+    let textfile = "first
+second
+third";
+    let patternfile = "third\n";
+    let result = "first\nsecond\n";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), true).await,
+               Ok(JsValue::from_str(result)));
+}
+
+#[wasm_bindgen_test]
+async fn prunesTwoPattterns() {
+    let textfile = "first
+second
+third";
+    let patternfile = "third\nsecond\n";
+    let result = "first\n";
+    assert_eq!(grep(textfile.to_string(), patternfile.to_string(), true).await,
                Ok(JsValue::from_str(result)));
 }
