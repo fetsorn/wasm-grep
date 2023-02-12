@@ -7,11 +7,11 @@
     "files": [
         "pkg/**/*"
     ],
-    "version": "0.2.1",
+    "version": "0.3.0",
     "license": "MIT",
     "repository": {
-      "type": "git",
-      "url": "https://github.com/fetsorn/wasm-grep"
+        "type": "git",
+        "url": "https://github.com/fetsorn/wasm-grep"
     },
     "scripts": {
         "build": "yarn clean && yarn build:bundler && yarn build:web",
