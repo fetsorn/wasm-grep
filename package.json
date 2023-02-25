@@ -7,16 +7,17 @@
     "files": [
         "pkg/**/*"
     ],
-    "version": "0.3.0",
+    "version": "0.3.1",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/fetsorn/wasm-grep"
     },
     "scripts": {
-        "build": "yarn clean && yarn build:bundler && yarn build:web",
+        "build": "yarn clean && yarn build:bundler && yarn build:web && yarn build:nodejs",
         "build:bundler": "webpack -c webpack.bundler.mjs",
         "build:web": "webpack -c webpack.web.mjs",
+        "build:nodejs": "webpack -c webpack.nodejs.mjs",
         "test": "yarn test:node; yarn test:browser",
         "test:browser": "wasm-pack test --headless --firefox --safari",
         "test:node": "wasm-pack test --node",

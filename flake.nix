@@ -55,6 +55,7 @@
         devShell = (({ pkgs, ... }:
           pkgs.mkShell {
             buildInputs = with pkgs; [
+              yarn
               cargo
               nodejs
               wasm-pack
